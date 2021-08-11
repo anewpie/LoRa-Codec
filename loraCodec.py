@@ -37,6 +37,7 @@ nPayload = 255
 CR = 1
 crcEnb = 1
 
+#derive parameters, do not modify
 nCodewordInHead = 0
 nSymbolInHead = 0
 nHeadCodeword = 0
@@ -101,12 +102,12 @@ else:
     txSymbol = np.zeros((nSymbol,SF))
 
 if headMode=='explicit':
-    symbol = xLora(hammingCodeword[0:nCodewordInHead][:],nCodewordInHead,4,1,'x')
+    symbol = xLora(hammingCodeword[0:nCodewordInHead][:],nCodewordInHead,4,'x')
     for i in range(0,nSymbolInHead):
         txSymbol[i][0:nCodewordInHead] = grayCode(symbol[i][:],'g2b')
     
 for i in range(0,nBlock):
-    symbol = xLora(hammingCodeword[nCodewordInHead+i*SF:nCodewordInHead+(i+1)*SF][:],SF,CR,0,'x')
+    symbol = xLora(hammingCodeword[nCodewordInHead+i*SF:nCodewordInHead+(i+1)*SF][:],SF,CR,'x')
     for j in range(0,4+CR):
         txSymbol[nSymbolInHead+i*(4+CR)+j][0:SF] = grayCode(symbol[j][:],'g2b')
 
@@ -137,7 +138,7 @@ if headMode=='explicit':
     symbol = np.zeros((nSymbolInHead,nCodewordInHead))
     for i in range(0,nSymbolInHead):
         symbol[i][:] = grayCode(rxSymbol[i][0:nCodewordInHead],'b2g')
-    hammingCodeword = xLora(symbol,nCodewordInHead,4,1,'o')
+    hammingCodeword = xLora(symbol,nCodewordInHead,4,'o')
     for i in range(0,nCodewordInHead):
         hammingNibble[i][:] = hammingLora(hammingCodeword[i][:],hammingH,4,'dec')
     headNibble = hammingNibble[0:nHeadCodeword][:]
@@ -154,7 +155,7 @@ for i in range(0,nSymbol-nSymbolInHead):
 
 #deinterleave
 for i in range(0,nBlock):
-    hammingCodeword = xLora(symbol[i*(4+CR):(i+1)*(4+CR)][:],SF,CR,0,'o')
+    hammingCodeword = xLora(symbol[i*(4+CR):(i+1)*(4+CR)][:],SF,CR,'o')
     #hamming decode
     for j in range(0,SF):
         hammingNibble[nCodewordInHead+i*SF+j][:] = hammingLora(hammingCodeword[j][:],hammingH,CR,'dec')

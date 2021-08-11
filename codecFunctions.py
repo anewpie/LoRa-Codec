@@ -48,12 +48,12 @@ def hammingLora(inBits,H,CR,mode):
     return outBits
 
 #block x
-def xLora(inBits,SF,CR,isHead,mode):
+def xLora(inBits,SF,CR,mode):
     
     if mode=='x':
         outBits = np.flipud(np.fliplr(inBits.T))
         #special for CR=1
-        if ~isHead&(CR==1):
+        if CR==1:
             outBits[4][:] = (outBits[4][:] + outBits[3][:])%2
         for i in range(0,4+CR):
             outBits[i][:] = np.hstack((outBits[i][SF-i:SF],outBits[i][0:SF-i]))
@@ -61,7 +61,7 @@ def xLora(inBits,SF,CR,isHead,mode):
         for i in range(0,4+CR):
             inBits[i][:] = np.hstack((inBits[i][i:SF],inBits[i][0:i]))
         #special for CR=1
-        if ~isHead&(CR==1):
+        if CR==1:
             inBits[4][:] = (inBits[4][:] + inBits[3][:])%2
         outBits = np.flipud(np.fliplr(inBits.T))
     
