@@ -1,11 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-Created on Thu Aug  5 16:41:47 2021
-
-@author: du fanping
+Created on Aug 11 2021
+@author: anewpie
 """
 
-#import scipy as sp
 import numpy as np
 from codecFunctions import whiteningLora
 from codecFunctions import crcLora
@@ -19,8 +17,7 @@ headH = [
     [1,0,0,0,1,1,1,0,0,0,0,1],
     [0,1,0,0,1,0,0,1,1,0,1,0],
     [0,0,1,0,0,1,0,1,0,1,1,1],
-    [0,0,0,1,0,0,1,0,1,1,1,1]
-    ]
+    [0,0,0,1,0,0,1,0,1,1,1,1]]
 
 #'0xB8'
 whiteningPoly = [1,0,1,1,1,0,0,0]
@@ -82,13 +79,13 @@ if headMode=='explicit':
     headBit = list(map(int,bin(nPayload*16+CR*2+crcEnb)[2:].zfill(12)))
     headCheck = list(np.dot(headH,headBit)%2)
     headNibble = np.array([headBit[0:4],headBit[4:8],headBit[8:12],[0,0,0,headCheck[0]],headCheck[1:5]])
-hammingNibble = np.vstack((headNibble,hammingNibble))
+    hammingNibble = np.vstack((headNibble,hammingNibble))
 
 #crc    
 if crcEnb:
     crc = crcLora(txBits,crcPoly)
     crcNibble = np.array([crc[12:16],crc[8:12],crc[4:8],crc[0:4]])
-hammingNibble = np.vstack((hammingNibble,crcNibble))
+    hammingNibble = np.vstack((hammingNibble,crcNibble))
     
 #hamming encode
 hammingCodeword = hammingLora(hammingNibble,hammingH,CR,'enc')

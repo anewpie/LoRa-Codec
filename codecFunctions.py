@@ -1,14 +1,12 @@
 # -*- coding: utf-8 -*-
 """
-Created on Thu Aug  5 09:22:02 2021
-
-@author: du fanping
+Created on Aug 11 2021
+@author: anewpie
 """
 
-#import scipy as sp
 import numpy as np
 
-#LFSR:’B8‘
+#LFSR:'B8'
 def whiteningLora(inBits,whiteningPoly):
     
     regs = np.ones(8)
