@@ -28,7 +28,7 @@ crcPoly = [0,0,0,1,0,0,0,0,0,0,1,0,0,0,0,1]
 hammingH = [[1,1,0,1],[1,0,1,1],[1,1,1,0],[0,1,1,1]]
 
 #configure paramters
-SF = 12
+SF = 6
 
 reduceMode = 'off'
 headMode = 'explicit'
@@ -45,12 +45,14 @@ nHeadCodeword = 0
 if SF<7:
     headMode = 'implicit'
 
-if headMode=='explicit':
+if headMode=='explicit' or SF==6:
     nCodewordInHead = SF - 2
     nSymbolInHead = 8
+    
+if headMode=='explicit':    
     nHeadCodeword = 5
 
-if SF<11:
+if SF<7:
     reduceMode = 'off'
 
 if reduceMode=='on':
@@ -101,7 +103,7 @@ if reduceMode=='on':
 else:
     txSymbol = np.zeros((nSymbol,SF))
 
-if headMode=='explicit':
+if headMode=='explicit' or SF==6:
     symbol = xLora(hammingCodeword[0:nCodewordInHead][:],nCodewordInHead,4,'x')
     for i in range(0,nSymbolInHead):
         txSymbol[i][0:nCodewordInHead] = grayCode(symbol[i][:],'g2b')
@@ -134,13 +136,15 @@ del txBytes
 #decode
 hammingNibble = np.zeros((nCodewordInHead + nBlock*SF,4))
 #head
-if headMode=='explicit':
+if headMode=='explicit' or SF==6:
     symbol = np.zeros((nSymbolInHead,nCodewordInHead))
     for i in range(0,nSymbolInHead):
         symbol[i][:] = grayCode(rxSymbol[i][0:nCodewordInHead],'b2g')
     hammingCodeword = xLora(symbol,nCodewordInHead,4,'o')
     for i in range(0,nCodewordInHead):
         hammingNibble[i][:] = hammingLora(hammingCodeword[i][:],hammingH,4,'dec')
+    
+if headMode=='explicit':
     headNibble = hammingNibble[0:nHeadCodeword][:]
     headBit = np.array(headNibble[0:3][:]).flatten()
     headCheck = np.dot(headH,headBit)%2
